@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="white">#ffffff</color>
+    <color name="darkbottom">#8aa7af</color>
+    <color name="darker">#83a6b0</color>
+    <color name="black">#171717</color>
+    <color name="lightDark">#454545</color>
+    <color name="dark">#f2f5df</color>
+    <color name="day">#ffffff</color>
+    <color name="charcoal">#36394D</color>
+    <color name="seek">#9ad4e2</color>
+    <color name="card">#7960E5</color>
+</resources>
