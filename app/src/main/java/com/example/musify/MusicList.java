@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 public class MusicList implements Serializable {
 
-    private String title,artist,duration;
+    private final  String title,artist,duration;
     private boolean isPlaying;
-    private Uri musicFile;
+    private final Uri musicFile;
 
     public MusicList(String title, String artist, String duration, boolean isPlaying, Uri musicFile) {
         this.title = title;

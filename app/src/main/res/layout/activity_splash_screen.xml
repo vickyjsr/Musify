@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashScreen"
+    android:background="@color/dark"
+    android:orientation="vertical"
+    >
+    <View
+        android:layout_width="16dp"
+        android:visibility="invisible"
+        android:layout_height="140dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:background="@color/black"
+        android:id="@+id/v1"
+        />
+    <View
+        android:visibility="invisible"
+        android:layout_width="16dp"
+        android:layout_height="110dp"
+        android:layout_toStartOf="@+id/v1"
+        android:id="@+id/v2"
+        android:layout_marginEnd="15dp"
+        android:background="@color/lightDark"
+        />
+    <View
+        android:visibility="invisible"
+        android:layout_width="16dp"
+        android:layout_height="80dp"
+        android:layout_toStartOf="@+id/v2"
+        android:id="@+id/v3"
+        android:layout_marginEnd="15dp"
+        android:background="@color/darker"
+        />
+
+    <LinearLayout
+        android:id="@+id/ll_1"
+        android:layout_width="match_parent"
+        android:layout_height="168dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="380dp"
+            android:layout_height="111dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_bestlogo1"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/slogan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/welcome"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <View
+        android:visibility="invisible"
+        android:layout_width="16dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="15dp"
+        android:background="@color/black"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/v4"
+        />
+
+    <View
+        android:visibility="invisible"
+        android:layout_width="16dp"
+        android:layout_height="110dp"
+        android:layout_toEndOf="@+id/v4"
+        android:layout_marginStart="15dp"
+        android:id="@+id/v5"
+        android:layout_alignParentBottom="true"
+        android:background="@color/lightDark"
+        />
+
+    <View
+        android:visibility="invisible"
+        android:id="@+id/v6"
+        android:layout_width="16dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/v5"
+        android:background="@color/darker" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="48dp"
+        android:layout_height="46dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="28dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music2" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="38dp"
+        android:layout_height="37dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="182dp"
+        android:layout_marginEnd="72dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music7" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="31dp"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="103dp"
+        android:layout_marginBottom="89dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music3noti" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="42dp"
+        android:layout_height="39dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="232dp"
+        android:layout_marginTop="30dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music4" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="40dp"
+        android:layout_height="39dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="218dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music5" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="38dp"
+        android:layout_height="39dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="66dp"
+        android:layout_marginBottom="171dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music8" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="56dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="81dp"
+        android:layout_marginTop="179dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music9" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="36dp"
+        android:layout_height="34dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="116dp"
+        android:layout_marginBottom="129dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_music6" />
+</RelativeLayout>

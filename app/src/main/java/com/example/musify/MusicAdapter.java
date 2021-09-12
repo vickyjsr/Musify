@@ -1,24 +1,45 @@
 package com.example.musify;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import soup.neumorphism.NeumorphCardView;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder> {
+import static android.content.ContentValues.TAG;
+
+public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder> implements View.OnClickListener {
 
     private List<MusicList> list;
     private final Context context;
@@ -37,6 +58,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.music_adapter,null));
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         MusicList list2 = list.get(position);
@@ -44,7 +66,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
         if(list2.isPlaying())
         {
             playingPosition = position;
-            holder.rootlayout.setBackgroundResource(R.drawable.round);
+            holder.rootlayout.setBackgroundResource(R.drawable.roundglass);
         }
         else
         {
@@ -59,18 +81,81 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
         holder.artist.setText(list2.getArtist());
         holder.musicDuration.setText(generateDuration);
 
-        holder.rootlayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                list.get(playingPosition).setPlaying(false);
-                list2.setPlaying(true);
-                songChangeListener.onChanged(position);
-                notifyDataSetChanged();
-            }
+        holder.rootlayout.setOnClickListener(v -> {
+            list.get(playingPosition).setPlaying(false);
+            list2.setPlaying(true);
+            songChangeListener.onChanged(position);
+            notifyDataSetChanged();
+        });
+
+        holder.iv.setOnClickListener(view -> {
+
+            //creating a popup menu
+            PopupMenu popup = new PopupMenu(context, holder.iv);
+            //inflating menu from xml resource
+            popup.inflate(R.menu.menu_adapter);
+            //adding click listener
+            popup.setOnMenuItemClickListener(item -> {
+                int action = item.getItemId();
+                if(action==R.id.action_delete)
+                {
+                    removeAt(position);
+                    return true;
+                }
+                else if(action==R.id.play_next)
+                {
+                    MainActivity.nextsong = position;
+                    return true;
+                }
+                else return false;
+            });
+            //displaying the popup
+            popup.show();
+
         });
 
     }
 
+
+    public void removeAt(int position) {
+        AlertDialog.Builder builder =new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure!!").setCancelable(false).setPositiveButton("YES", (dialog, which) -> {
+
+
+            Toast.makeText(context,"Not implemented yet!!",Toast.LENGTH_SHORT).show();
+
+//                Uri uri = list.get(position).getMusicFile();
+//
+//                File fdelete = new File(uri.getPath());
+//
+//                // this is not executed can you give me another method to delete a file uri
+//
+//                if (fdelete.exists())
+//                {
+//
+//                    Log.d(TAG, "inside exists");
+//
+//                    if (fdelete.delete())
+//                    {
+//
+//                        Log.d(TAG, "inside delete");
+//                        list.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyDataSetChanged();
+//                        notifyItemRangeChanged(position,list.size());
+//                        Toast.makeText(context,"File Deleted!!",Toast.LENGTH_SHORT).show();
+//
+//                    } else {
+//                        Toast.makeText(context,"File Not Found!!",Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+
+
+        }).setNegativeButton("No", (dialog, which) -> dialog.cancel());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+    }
     public void update(List<MusicList> list)
     {
         this.list = list;
@@ -82,11 +167,20 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
         return list.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+
+
+    static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final RelativeLayout rootlayout;
         private final TextView title,artist;
         private final TextView musicDuration;
+        private final ImageButton iv;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,8 +189,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
             title = itemView.findViewById(R.id.musicTitle);
             artist = itemView.findViewById(R.id.musicArtist);
             musicDuration = itemView.findViewById(R.id.musicDuration);
+            iv = itemView.findViewById(R.id.showOptions);
+
+        }
 
 
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(Menu.NONE, R.id.play_next,
+                    Menu.NONE, R.string.edit);
+            menu.add(Menu.NONE, R.id.action_delete,
+                    Menu.NONE, R.string.delete);
         }
 
     }

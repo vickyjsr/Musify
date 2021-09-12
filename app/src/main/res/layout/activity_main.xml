@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:orientation="vertical"
     android:background="@color/dark"
     >
 
@@ -19,27 +20,29 @@
             android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
             android:background="@drawable/round"
             android:layout_alignParentStart="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ic_about"
-                >
+                android:src="@drawable/ic_light_mode_svgrepo_com"
+                android:id="@+id/themes"
+                android:contentDescription="@string/todo8">
 
             </ImageView>
         </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MUSIFY"
+            android:text="@string/musify"
             android:textStyle="bold"
+            android:layout_toEndOf="@+id/search"
+            android:layout_toStartOf="@+id/menu_bar"
             android:textSize="26sp"
             android:textColor="@color/day"
+            android:textAlignment="center"
             android:layout_centerInParent="true"
             />
         <LinearLayout
@@ -51,26 +54,35 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
             android:background="@drawable/round"
-            android:layout_alignParentRight="true"
             android:layout_marginRight="20dp">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="35dp"
                 android:id="@+id/menu"
                 android:src="@drawable/ic_menu"
-                />
+                android:contentDescription="@string/todo5" />
         </LinearLayout>
     </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
         android:layout_above="@+id/bottom_card"
         android:layout_below="@+id/top_card"
-        android:id="@+id/music_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         >
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_card"
+            android:layout_below="@+id/top_card"
+            android:id="@+id/music_recycler_view"
+            >
+        </androidx.recyclerview.widget.RecyclerView>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
 
     <LinearLayout
         android:id="@+id/bottom_card"
@@ -94,25 +106,24 @@
                 android:textColor="@color/day"
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 />
         </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            >
+        <!--        <RelativeLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:paddingTop="5dp"-->
+        <!--            >-->
 
-            <TextView
-                android:id="@+id/musicbar_artist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_centerVertical="true"
-                android:textColor="@color/day"
-                android:paddingBottom="5dp"
-                android:layout_marginStart="10dp" />
-        </RelativeLayout>
+        <!--            <TextView-->
+        <!--                android:id="@+id/musicbar_artist"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:textSize="16sp"-->
+        <!--                android:layout_centerVertical="true"-->
+        <!--                android:textColor="@color/day"-->
+        <!--                android:paddingBottom="5dp"-->
+        <!--                android:layout_marginStart="10dp" />-->
+        <!--        </RelativeLayout>-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -165,7 +176,8 @@
                 android:layout_height="50dp"
                 android:src="@drawable/ic_baseline_skip_previous_24"
                 android:background="@drawable/round_icon"
-                android:padding="10dp"/>
+                android:padding="10dp"
+                android:contentDescription="@string/todo6" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/play_pause_card"
@@ -174,10 +186,7 @@
                 app:cardBackgroundColor="@color/card"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="10dp"
-                app:cardUseCompatPadding="true"
-                android:outlineAmbientShadowColor="@color/black"
-                android:outlineSpotShadowColor="@color/black"
-                >
+                app:cardUseCompatPadding="true">
                 <ImageView
                     android:id="@+id/play_pause_button"
                     android:layout_width="match_parent"
@@ -193,7 +202,7 @@
                 android:src="@drawable/ic_baseline_skip_next_24"
                 android:background="@drawable/round_icon"
                 android:padding="10dp"
-                />
+                android:contentDescription="@string/todo7" />
 
         </LinearLayout>
 

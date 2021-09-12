@@ -4,4 +4,13 @@
     <string name="choose">Choose</string>
     <string name="_0_00">0:00</string>
     <string name="todo1">TODO</string>
+    <string name="todo5">TODO5</string>
+    <string name="todo6">TODO6</string>
+    <string name="todo7">TODO7</string>
+    <string name="musify">MUSIFY</string>
+    <string name="todo8">TODO8</string>
+    <string name="todo9">TODO</string>
+    <string name="welcome">Welcome</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>

@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/sorting"
+        android:orderInCategory="100"
+        android:title="Sorting"
+        app:showAsAction="never"
+        >
+        <menu>
+            <item
+                android:id="@+id/music"
+                android:orderInCategory="100"
+                android:title="Music"
+                app:showAsAction="never"
+                />
+            <item
+                android:id="@+id/artist"
+                android:orderInCategory="100"
+                android:title="Artist"
+                app:showAsAction="never"
+                />
+            <item
+                android:id="@+id/duration"
+                android:orderInCategory="100"
+                android:title="Duration"
+                app:showAsAction="never"
+                />
+        </menu>
+    </item>
 
+    <item
+        android:id="@+id/action_contact"
+        android:orderInCategory="100"
+        android:title="Contact Us"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:title="Help"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="Refresh"
+        app:showAsAction="never"
+        />
 </menu>
