@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
@@ -77,6 +78,18 @@ public class CreateNotification  extends Service {
             PendingIntent pendingIntentclose = PendingIntent.getBroadcast(context,
                     1, intentClose,PendingIntent.FLAG_UPDATE_CURRENT );
 
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            byte[] rawArt;
+            Bitmap art = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_foreground);
+            BitmapFactory.Options bfo=new BitmapFactory.Options();
+
+            mmr.setDataSource(context, musicList.getMusicFile());
+            rawArt = mmr.getEmbeddedPicture();
+
+// if rawArt is null then no cover art is embedded in the file or is not
+// recognized as such.
+            if (null != rawArt)
+                art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
 
             notification = new NotificationCompat.Builder(context,CHANNELID)
                     .setSmallIcon(R.drawable.ic_logo4)
@@ -95,6 +108,7 @@ public class CreateNotification  extends Service {
                             .setMediaSession(mediaSessionCompat.getSessionToken()))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setColor(Color.argb(1,218, 223, 225))
+                    .setLargeIcon(art)
                     .build();
 
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
@@ -144,6 +158,19 @@ public class CreateNotification  extends Service {
                     1, intentClose,PendingIntent.FLAG_UPDATE_CURRENT );
 
 
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            byte[] rawArt;
+            Bitmap art = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_foreground);
+            BitmapFactory.Options bfo=new BitmapFactory.Options();
+
+            mmr.setDataSource(context, musicList.getMusicFile());
+            rawArt = mmr.getEmbeddedPicture();
+
+// if rawArt is null then no cover art is embedded in the file or is not
+// recognized as such.
+            if (null != rawArt)
+                art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
+
             notification = new NotificationCompat.Builder(context,CHANNELID)
                     .setSmallIcon(R.drawable.ic_logo3)
                     .setContentTitle(musicList.getTitle())
@@ -161,6 +188,7 @@ public class CreateNotification  extends Service {
                             .setMediaSession(mediaSessionCompat.getSessionToken()))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setColor(Color.argb(1,218, 223, 225))
+                    .setLargeIcon(art)
                     .build();
 
             notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;

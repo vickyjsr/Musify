@@ -3,6 +3,7 @@ package com.example.musify;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -40,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
@@ -53,14 +56,19 @@ import android.widget.Toast;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -97,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
     ShimmerFrameLayout container;
     NotificationManager notificationManager;
 
+    SharedPreferences pref;
+
     String currsongtitle = null;
 
     private LinearLayout bottom_card;
@@ -121,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         startTime = findViewById(R.id.start_time);
         endTime = findViewById(R.id.end_time);
         musicbar_name = findViewById(R.id.musicbar_name);
+        musicbar_name.setSelected(true);
+
 //        musicbar_artist = findViewById(R.id.musicbar_artist);
         menu = findViewById(R.id.menu);
         bottom_card = findViewById(R.id.bottom_card);
@@ -132,7 +144,15 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         mediaPlayer = new MediaPlayer();
 
 
+
          container = findViewById(R.id.shimmer_view_container);
+
+
+        mp.clear();
+        for(int i = 0; i<musicLists.size(); i++)
+        {
+            mp.put(musicLists.get(i).getTitle(),i);
+        }
 
         if(shimmerbool)
         {
@@ -180,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
         {
+            shimmer();
             getMusicFiles();
         }
         else
@@ -190,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             }
             else
             {
+                shimmer();
                 getMusicFiles();
             }
         }
@@ -207,27 +229,35 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             popup.show();
         });
 
-        theme.setOnClickListener(v -> {
-            if(themecount)
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+1:00"));
+        Date currentLocalTime = cal.getTime();
+        DateFormat date = new SimpleDateFormat("HH:mm a");
+// you can get seconds by adding  "...:ss" to it
+        date.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
+
+        String localTime = date.format(currentLocalTime);
+
+        Log.d(TAG, localTime);
+
+        if(localTime.contains("pm"))
+        {
+            theme.setImageResource(R.drawable.ic_dark_mode_svgrepo_com);
+            if(darkint==0)
             {
-                theme.setImageResource(R.drawable.ic_dark_mode_svgrepo_com);
-                if(darkint==0)
-                {
-                    darkint = 1;
-                    Toast.makeText(getApplicationContext(),"  Nox",Toast.LENGTH_SHORT).show();
-                }
+                darkint = 1;
+                Toast.makeText(getApplicationContext(),"  Nox",Toast.LENGTH_SHORT).show();
             }
-            else
+        }
+        else
+        {
+            theme.setImageResource(R.drawable.ic_light_mode_svgrepo_com);
+            if(lightint==0)
             {
-                theme.setImageResource(R.drawable.ic_light_mode_svgrepo_com);
-                if(lightint==0)
-                {
-                    lightint = 1;
-                    Toast.makeText(getApplicationContext(),"Lumos",Toast.LENGTH_SHORT).show();
-                }
+                lightint = 1;
+                Toast.makeText(getApplicationContext(),"Lumos",Toast.LENGTH_SHORT).show();
             }
-            themecount = !themecount;
-        });
+        }
+
 
         playpauseCard.setOnClickListener(v -> {
 
@@ -319,13 +349,29 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
     }
 
 
+    private void shimmerless() {
+
+        container.showShimmer(true);
+        container.startShimmer();
+
+        new Handler().postDelayed(() -> {
+            container.stopShimmer();
+            container.hideShimmer();
+        }, 1000);
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public boolean onMenuItemClick(@NonNull MenuItem item) {
         int id = item.getItemId();
         if(id==R.id.action_refresh)
         {
-
+            currsongtitle = musicLists.get(currentSongNumber).getTitle();
+            if(nextsong!=-1)
+            {
+                nextsongTitle = musicLists.get(nextsong).getTitle();nextsong = -1;
+            }
             if(mediaPlayer.isPlaying())
             {
                 onPaused();
@@ -368,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             {
                 return true;
             }
+
             String title = musicLists.get(currentSongNumber).getTitle();
 
             if(currentSongNumber==nextsong)nextsong = -1;
@@ -375,9 +422,28 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             {
                 nextsongTitle = musicLists.get(nextsong).getTitle();
             }
-            Collections.sort(musicLists, (o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+
+            Collections.sort(musicLists, new Comparator<MusicList>() {
+                @Override
+                public int compare(MusicList o1, MusicList o2) {
+                    String x = o1.getTitle(),y = o2.getTitle();
+
+                    x = x.replaceAll(" ","");
+                    x = x.toLowerCase();
+
+                    y = y.replaceAll(" ","");
+                    y = y.toLowerCase();
+                    x = x.replaceAll("[^a-zA-Z0-9]", "");
+                    y = y.replaceAll("[^a-zA-Z0-9]", "");
+
+                    return x.compareTo(y);
+                }
+            });
+
+            shimmerless();
+
             mp.clear();
-            for(Integer i=0;i<musicLists.size();i++)
+            for(int i = 0; i<musicLists.size(); i++)
             {
                 mp.put(musicLists.get(i).getTitle(),i);
             }
@@ -412,10 +478,28 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
                 nextsongTitle = musicLists.get(nextsong).getTitle();
             }
 
-            Collections.sort(musicLists, (o1, o2) -> o1.getArtist().compareTo(o2.getArtist()));
+            Collections.sort(musicLists, new Comparator<MusicList>() {
+                @Override
+                public int compare(MusicList o1, MusicList o2) {
+
+                    String x = o1.getArtist(),y = o2.getArtist();
+
+                    x = x.replaceAll(" ","");
+                    x = x.toLowerCase();
+
+                    y = y.replaceAll(" ","");
+                    y = y.toLowerCase();
+                    x = x.replaceAll("[^a-zA-Z0-9]", "");
+                    y = y.replaceAll("[^a-zA-Z0-9]", "");
+
+                    return x.compareTo(y);
+                }
+            });
+
+            shimmerless();
 
             mp.clear();
-            for(Integer i=0;i<musicLists.size();i++)
+            for(int i = 0; i<musicLists.size(); i++)
             {
                 mp.put(musicLists.get(i).getTitle(),i);
             }
@@ -441,8 +525,10 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             {
                 return true;
             }
+
             String title = musicLists.get(currentSongNumber).getTitle();
             if(currentSongNumber==nextsong)nextsong = -1;
+
             if(nextsong!=-1)
             {
                 nextsongTitle = musicLists.get(nextsong).getTitle();
@@ -453,6 +539,8 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
                 long y = getduration_in_int(o2.getDuration());
                 return Long.compare(x,y);
             });
+
+            shimmerless();
 
             mp.clear();
             for(int i = 0; i<musicLists.size(); i++)
@@ -555,7 +643,23 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
 
             musicAdapater = new MusicAdapter(musicLists,MainActivity.this);
             musicRecyclerV.setAdapter(musicAdapater);
-            Collections.sort(musicLists, Comparator.comparing(MusicList::getTitle));
+
+            Collections.sort(musicLists, new Comparator<MusicList>() {
+                @Override
+                public int compare(MusicList o1, MusicList o2) {
+                    String x = o1.getTitle(),y = o2.getTitle();
+
+                    x = x.replaceAll(" ","");
+                    x = x.toLowerCase();
+
+                    y = y.replaceAll(" ","");
+                    y = y.toLowerCase();
+                    x = x.replaceAll("[^a-zA-Z0-9]", "");
+                    y = y.replaceAll("[^a-zA-Z0-9]", "");
+
+                    return x.compareTo(y);
+                }
+            });
 
             for(int i = 0; i<musicLists.size(); i++)
             {
@@ -679,6 +783,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         }
         mediaPlayer.stop();
         mediaPlayer.release();
+
         mediaPlayer = MediaPlayer.create(MainActivity.this, musicLists.get(currentSongNumber).getMusicFile());
 
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -758,6 +863,19 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             bottom_card.setClickable(false);
             return;
         }
+
+        if(currsongtitle!=null)
+        {
+            currentSongNumber = mp.get(currsongtitle);
+        }
+        else
+            currsongtitle = musicLists.get(currentSongNumber).getTitle();
+
+        if(nextsongTitle!=null)
+        {
+            nextsong = mp.get(nextsongTitle);nextsongTitle = null;
+        }
+
         CreateNotification.createNotification(MainActivity.this,musicLists.get(currentSongNumber),R.drawable.ic_baseline_pause_24,currentSongNumber,musicLists.size()-1);
 
         isPlaying = true;
@@ -804,6 +922,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onPaused() {
+        currsongtitle = musicLists.get(currentSongNumber).getTitle();
 
         if(musicLists.isEmpty())
         {
@@ -825,15 +944,27 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             bottom_card.setClickable(false);
             return;
         }
+
         int nextsongnumber = currentSongNumber+1;
         if(nextsongnumber>=musicLists.size())
         {
             nextsongnumber = 0;
         }
+
+        if(currsongtitle!=null)
+        {
+            currentSongNumber = mp.get(currsongtitle);
+        }
+        if(nextsongTitle!=null)
+        {
+            nextsongnumber = mp.get(nextsongTitle);nextsongTitle = null;
+            nextsong = nextsongnumber;
+        }
         if(currentSongNumber==nextsong)
         {
             nextsong = -1;
         }
+
         if(nextsong!=-1)
         {
             nextsongnumber = nextsong;

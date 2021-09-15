@@ -5,6 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#ffffff</color>
     <color name="darkbottom">#8aa7af</color>
+    <color name="menusvg">#f8e9d2</color>
     <color name="darker">#83a6b0</color>
     <color name="black">#010b13</color>
     <color name="lightDark">#454545</color>
@@ -15,4 +16,5 @@
     <color name="charcoal">#36394D</color>
     <color name="seek">#9ad4e2</color>
     <color name="card">#7960E5</color>
+    <color name="musicbarcolor">#D5D4D4</color>
 </resources>

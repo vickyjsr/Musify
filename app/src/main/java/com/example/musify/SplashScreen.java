@@ -56,7 +56,7 @@ public class SplashScreen extends AppCompatActivity {
         vbot2 = findViewById(R.id.v5);
         vbot3 = findViewById(R.id.v6);
 
-        Animation logoanim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_animation);
+        Animation logoanim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade);
 
         Animation animiv1 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_animation);
         Animation animiv2 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_animation);
@@ -152,6 +152,7 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 logo.setVisibility(View.VISIBLE);
+
                 logo.setAnimation(logoanim);
             }
 
