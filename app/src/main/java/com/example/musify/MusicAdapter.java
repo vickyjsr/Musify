@@ -1,5 +1,6 @@
 package com.example.musify;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -99,7 +101,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
                 int action = item.getItemId();
                 if(action==R.id.action_delete)
                 {
-                    removeAt(position);
+                    removeAt(position,view);
                     return true;
                 }
                 else if(action==R.id.play_next)
@@ -117,39 +119,19 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
     }
 
 
-    public void removeAt(int position) {
+    public void removeAt(int position,View v) {
         AlertDialog.Builder builder =new AlertDialog.Builder(context);
         builder.setMessage("Are you sure!!").setCancelable(false).setPositiveButton("YES", (dialog, which) -> {
-
-
-            Toast.makeText(context,"Not implemented yet!!",Toast.LENGTH_SHORT).show();
-
-//                Uri uri = list.get(position).getMusicFile();
 //
-//                File fdelete = new File(uri.getPath());
+//            Uri uri = list.get(position).getMusicFile();
 //
-//                // this is not executed can you give me another method to delete a file uri
-//
-//                if (fdelete.exists())
-//                {
-//
-//                    Log.d(TAG, "inside exists");
-//
-//                    if (fdelete.delete())
-//                    {
-//
-//                        Log.d(TAG, "inside delete");
-//                        list.remove(position);
-//                        notifyItemRemoved(position);
-//                        notifyDataSetChanged();
-//                        notifyItemRangeChanged(position,list.size());
-//                        Toast.makeText(context,"File Deleted!!",Toast.LENGTH_SHORT).show();
-//
-//                    } else {
-//                        Toast.makeText(context,"File Not Found!!",Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-
+//            ContentResolver contentResolver = context.getContentResolver();
+//            contentResolver.delete (uri,null ,null );
+////            MainActivity.musicLists.remove(position);
+//            list.remove(position);
+//            notifyItemRemoved(position);
+//            notifyItemRangeChanged(position,list.size());
+            Toast.makeText(context,"Not Implemented yet!!",Toast.LENGTH_SHORT).show();
 
         }).setNegativeButton("No", (dialog, which) -> dialog.cancel());
         AlertDialog alertDialog = builder.create();

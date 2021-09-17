@@ -3,15 +3,12 @@ package com.example.musify;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -25,37 +22,37 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.io.IOException;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,8 +77,9 @@ import static maes.tech.intentanim.CustomIntent.customType;
 
 public class MainActivity extends AppCompatActivity implements SongChangeListener, PopupMenu.OnMenuItemClickListener, ServiceConnection {
 
-    private final List<MusicList> musicLists = new ArrayList<>();
+    static final List<MusicList> musicLists = new ArrayList<>();
     private boolean shimmerbool = true;
+    private int sessionid = 0;
 
     private RecyclerView musicRecyclerV;
     private MediaPlayer mediaPlayer;
@@ -120,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
 
         setFullScreen();
 
+
         final LinearLayout menubtn = findViewById(R.id.menu_bar);
         musicRecyclerV = findViewById(R.id.music_recycler_view);
         final CardView playpauseCard = findViewById(R.id.play_pause_card);
@@ -144,9 +143,12 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         mediaPlayer = new MediaPlayer();
 
 
+        container = findViewById(R.id.shimmer_view_container);
 
-         container = findViewById(R.id.shimmer_view_container);
-
+        if(savedInstanceState!=null)
+        {
+            check();
+        }
 
         mp.clear();
         for(int i = 0; i<musicLists.size(); i++)
@@ -202,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         {
             shimmer();
             getMusicFiles();
+            check();
         }
         else
         {
@@ -213,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             {
                 shimmer();
                 getMusicFiles();
+                check();
             }
         }
 
@@ -227,6 +231,13 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             popup.setOnMenuItemClickListener(MainActivity.this);
             popup.inflate(R.menu.menu);
             popup.show();
+        });
+
+        bottom_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheetDialog();
+            }
         });
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+1:00"));
@@ -312,14 +323,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
 
                 if(fromUser)
                 {
-                    if(isPlaying)
-                    {
-                        mediaPlayer.seekTo(progress);
-                    }
-                    else
-                    {
-                        mediaPlayer.seekTo(0);
-                    }
+                    mediaPlayer.seekTo(progress);
                 }
             }
 
@@ -334,6 +338,75 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             }
         });
 
+    }
+
+    private void showBottomSheetDialog() {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
+
+        RelativeLayout musicimage = bottomSheetDialog.findViewById(R.id.music_image);
+        RelativeLayout names = bottomSheetDialog.findViewById(R.id.name);
+        ImageView musicbottomimage = bottomSheetDialog.findViewById(R.id.musicbottomimage);
+        ImageView back = bottomSheetDialog.findViewById(R.id.backbottom);
+        ImageView blast = bottomSheetDialog.findViewById(R.id.blast);
+
+
+        TextView namesong = bottomSheetDialog.findViewById(R.id.musicname);
+        TextView nameartist = bottomSheetDialog.findViewById(R.id.musicartistname);
+
+        assert namesong != null;
+
+        namesong.setSelected(true);
+
+        namesong.setText(musicLists.get(currentSongNumber).getTitle());
+        assert nameartist != null;
+        nameartist.setText(musicLists.get(currentSongNumber).getArtist());
+
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        byte[] rawArt;
+        Bitmap art = null;
+        BitmapFactory.Options bfo=new BitmapFactory.Options();
+
+        mmr.setDataSource(getApplicationContext(), musicLists.get(currentSongNumber).getMusicFile());
+        rawArt = mmr.getEmbeddedPicture();
+
+// if rawArt is null then no cover art is embedded in the file or is not
+// recognized as such.
+        if (null != rawArt)
+            art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
+
+        Drawable d;
+        if (null == rawArt)
+        {
+            d = getDrawable(R.drawable.ic_bottomdialog);
+        }
+        else
+            d = new BitmapDrawable(getResources(), art);
+        assert musicbottomimage != null;
+
+        musicbottomimage.setBackground(d);
+
+        assert back != null;
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
+        assert blast != null;
+
+        if(mediaPlayer.isPlaying())
+        {
+            Glide.with(this).asGif().load(R.raw.visualizer).into(blast);
+        }
+        else
+        {
+            blast.setImageResource(R.drawable.ic_waveform);
+        }
+
+        bottomSheetDialog.show();
     }
 
     private void shimmer() {
@@ -489,6 +562,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
 
                     y = y.replaceAll(" ","");
                     y = y.toLowerCase();
+
                     x = x.replaceAll("[^a-zA-Z0-9]", "");
                     y = y.replaceAll("[^a-zA-Z0-9]", "");
 
@@ -573,6 +647,33 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
             return false;
     }
 
+    private void check() {
+        SharedPreferences sharedPreferences = getSharedPreferences("songTitle",MODE_PRIVATE);
+
+        currsongtitle = sharedPreferences.getString("songTitle","this");
+        if(currsongtitle==null)
+        {
+            currsongtitle = musicLists.get(currentSongNumber).getTitle();
+        }
+        for(int i=0;i<musicLists.size();i++)
+        {
+            if(currsongtitle.equals(musicLists.get(i).getTitle()))
+            {
+                currentSongNumber = i;
+            }
+        }
+
+        musicbar_name.setText(musicLists.get(currentSongNumber).getTitle());
+        startTime.setText("00:00");
+        long getTotalDuration = getduration_in_int(musicLists.get(currentSongNumber).getDuration());
+        String generateDuration = String.format(Locale.getDefault(),"%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(getTotalDuration),
+                TimeUnit.MILLISECONDS.toSeconds(getTotalDuration)-
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(getTotalDuration)));
+        endTime.setText(generateDuration);
+
+    }
+
     private long getduration_in_int(String d) {
         return Long.parseLong(d);
     }
@@ -626,8 +727,9 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
                 final String getmusicfileName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 final String getArtistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 long cursorid = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 Uri musicFileuri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,cursorid);
-                
+                String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String getDuration = "00:00";
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q)
                 {
@@ -635,7 +737,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
                 }
                 musicbar_name.setText(getmusicfileName);
 //                musicbar_artist.setText(getArtistName);
-                final MusicList musicList = new MusicList(getmusicfileName,getArtistName,getDuration,false,musicFileuri);
+                final MusicList musicList = new MusicList(getmusicfileName,getArtistName,getDuration,false, musicFileuri, cursorid, id, path);
 
                 musicLists.add(musicList);
             }
@@ -796,6 +898,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         mediaPlayer.start();
 
         mediaPlayer.setOnPreparedListener(mp -> {
@@ -850,6 +953,22 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
                 });
             }
         },1000,1000);
+
+
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+
+                if(what == MediaPlayer.MEDIA_ERROR_SERVER_DIED || what == MediaPlayer.MEDIA_ERROR_UNKNOWN)
+                    mp.reset();
+
+                if(extra==MediaPlayer.MEDIA_ERROR_IO||extra==MediaPlayer.MEDIA_ERROR_MALFORMED||extra==MediaPlayer.MEDIA_ERROR_UNSUPPORTED||extra==MediaPlayer.MEDIA_ERROR_TIMED_OUT)
+                    mp.reset();
+
+                onNext();
+                return true;
+            }
+        });
 
     }
 
@@ -992,6 +1111,8 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
     @Override
     protected void onDestroy() {
 
+        shared();
+
         super.onDestroy();
         if (mediaPlayer.isPlaying()) {
             onPaused();
@@ -1009,7 +1130,6 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBackPressed() {
@@ -1018,6 +1138,7 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         {
             backToast.cancel();
             super.onBackPressed();
+            shared();
             if (mediaPlayer.isPlaying()) {
                 isPlaying = false;
                 mediaPlayer.pause();
@@ -1043,6 +1164,14 @@ public class MainActivity extends AppCompatActivity implements SongChangeListene
         }
         backPresssedTime = System.currentTimeMillis();
 
+    }
+
+    private void shared() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("songTitle",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("songTitle",currsongtitle);
+        editor.apply();
     }
 
 

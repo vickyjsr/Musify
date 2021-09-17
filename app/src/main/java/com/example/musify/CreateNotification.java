@@ -92,7 +92,7 @@ public class CreateNotification  extends Service {
                 art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
 
             notification = new NotificationCompat.Builder(context,CHANNELID)
-                    .setSmallIcon(R.drawable.ic_logo4)
+                    .setSmallIcon(R.drawable.ic_logo3)
                     .setContentTitle(musicList.getTitle())
                     .setContentText(musicList.getArtist())
                     .setOnlyAlertOnce(true)

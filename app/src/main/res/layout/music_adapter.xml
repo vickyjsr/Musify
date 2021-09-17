@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
@@ -11,11 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:background="@drawable/round_back_blue_10"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:paddingBottom="10dp"
         >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +36,7 @@
                 android:outlineSpotShadowColor="@color/day"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" tools:targetApi="p" />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,16 +50,17 @@
                     android:textColor="@color/white"
                     android:layout_centerVertical="true"
                     android:textSize="13sp"
-                    />
+                    tools:targetApi="p" />
 
-                <ImageView
+                <TextView
                     android:id="@+id/iv1"
                     android:layout_width="10dp"
                     android:layout_height="9dp"
+                    android:text="."
+                    android:textColor="@color/white"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@+id/musicArtist"
-                    android:background="@drawable/ic_circle_svgrepo_com" />
+                    android:layout_toEndOf="@+id/musicArtist"/>
                 <TextView
                     android:layout_toEndOf="@+id/iv1"
                     android:id="@+id/musicDuration"
@@ -70,17 +73,18 @@
             </RelativeLayout>
         </LinearLayout>
 
-
         <ImageButton
             android:id="@+id/showOptions"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/ic_baseline_more_vert_24"
             android:textColor="@color/day"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:contentDescription="TODO15" />
 
     </RelativeLayout>
 </RelativeLayout>
