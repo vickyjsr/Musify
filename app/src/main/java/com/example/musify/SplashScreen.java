@@ -170,23 +170,7 @@ public class SplashScreen extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                slogan.setVisibility(View.VISIBLE);
-                final String sl = slogan.getText().toString();
-                slogan.setText("");
-                count = 0;
 
-                new CountDownTimer(sl.length() * 100, 100) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        slogan.setText(String.format("%s%s", slogan.getText().toString(), sl.charAt(count)));
-                        count++;
-                    }
-
-                    @Override
-                    public void onFinish() {
-
-                    }
-                }.start();
 
             }
 

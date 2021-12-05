@@ -10,7 +10,9 @@ public class MusicList implements Serializable {
     private boolean isPlaying;
     private final Uri musicFile;
     private String id, path;
-    public MusicList(String title, String artist, String duration, boolean isPlaying, Uri musicFile, long cursorid, String id, String path) {
+    private String isFav;
+
+    public MusicList(String title, String artist, String duration, boolean isPlaying, Uri musicFile, long cursorid, String id, String path, String isFav) {
         this.title = title;
         this.artist = artist;
         this.duration = duration;
@@ -18,6 +20,7 @@ public class MusicList implements Serializable {
         this.musicFile = musicFile;
         this.id = id;
         this.path = path;
+        this.isFav = isFav;
     }
 
 
@@ -59,5 +62,13 @@ public class MusicList implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String isFav() {
+        return isFav;
+    }
+
+    public void setFav(String liked) {
+        isFav = liked;
     }
 }

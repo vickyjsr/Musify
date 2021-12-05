@@ -6,4 +6,5 @@ public interface SongChangeListener {
     void onPrev();
     void onPaused();
     void onNext();
+    void showBottomSheetDialog();
 }
